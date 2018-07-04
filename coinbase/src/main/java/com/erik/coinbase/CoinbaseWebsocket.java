@@ -21,20 +21,22 @@ public class CoinbaseWebsocket extends WebSocketClient {
     private static final Logger logger=LogManager.getLogger(CoinbaseWebsocket.class);
     private final BookManager bookManager;
 
+    private final String product;
     private JsonParser parser=new JsonParser();
     public static final String EXCHANGE = "coinbase";
 
     // NOTE the constructor and the establish connection methods are intentionally limited to just 1 product
     // at this time.
-    public CoinbaseWebsocket(BookManager bookManager) throws URISyntaxException {
+    public CoinbaseWebsocket(BookManager bookManager,String product) throws URISyntaxException {
         super(new URI("wss://ws-feed.pro.coinbase.com"));
         this.bookManager=bookManager;
+        this.product=product;
     }
 
     // This will start an ETH-USD stream.  To keep things simple, lets stick with a single book for now
     public void establishConnection() throws InterruptedException {
         this.connectBlocking();
-        this.send("{\"type\": \"subscribe\",\"product_ids\": [\"ETH-USD\"],\"channels\": [\"level2\",\"heartbeat\"]}");
+        this.send("{\"type\": \"subscribe\",\"product_ids\": [\""+product+"\"],\"channels\": [\"level2\",\"heartbeat\"]}");
     }
 
     public void onOpen(ServerHandshake serverHandshake) {
@@ -54,7 +56,9 @@ public class CoinbaseWebsocket extends WebSocketClient {
         }else if(type.equals("l2update")){
             bookManager.receiveBookUpdate(getForL2Update(e));
         }else if(type.equals("heartbeat")) {
-            logger.debug("Received a heartbeat message");
+            logger.debug("Received a heartbeat message for {}",this);
+        }else if(type.equals("subscriptions")) {
+            logger.info("Successfully subscribed for {} and got this response: {}",this,s);
         }else{
             logger.warn("Received an unknown message type from coinbase: {}",type);
         }
@@ -100,5 +104,12 @@ public class CoinbaseWebsocket extends WebSocketClient {
 
     public void onError(Exception e) {
         logger.error("Received websockets exception for {}",this,e);
+    }
+
+    @Override
+    public String toString() {
+        return "CoinbaseWebsocket{" +
+                "product='" + product + '\'' +
+                '}';
     }
 }

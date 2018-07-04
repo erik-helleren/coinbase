@@ -130,7 +130,13 @@ public class BookManager implements Runnable{
     @Override
     public void run() {
         while(true){
-            BookEvent e=this.incomingBookEvents.poll();
+            BookEvent e= null;
+            try {
+                e = this.incomingBookEvents.take();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+            if(e==null) continue;
             if(e instanceof BookUpdateEvent){
                 processBookUpdate(((BookUpdateEvent)e).getUpdates());
             }else if(e instanceof EmitL2UpdateEvent){
