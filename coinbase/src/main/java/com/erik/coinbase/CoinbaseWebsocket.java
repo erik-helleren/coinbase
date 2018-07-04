@@ -32,7 +32,7 @@ public class CoinbaseWebsocket extends WebSocketClient {
     // This will start an ETH-USD stream.  To keep things simple, lets stick with a single book for now
     public void establishConnection() throws InterruptedException {
         this.connectBlocking();
-        this.send("{\"type\": \"subscribe\",\"product_ids\": [\"ETH-USD\"],\"channels\": [\"level2\",\"heartbeat\",{\"name\": \"ticker\",\"product_ids\": [\"ETH-USD\"]}]}");
+        this.send("{\"type\": \"subscribe\",\"product_ids\": [\"ETH-USD\"],\"channels\": [\"level2\",\"heartbeat\"]}");
     }
 
     public void onOpen(ServerHandshake serverHandshake) {
