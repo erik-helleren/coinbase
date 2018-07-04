@@ -64,15 +64,15 @@ public class CoinbaseWebsocket extends WebSocketClient {
         for(JsonElement e: o.get("bids").getAsJsonArray()){
             BookUpdate b=new BookUpdate(product,EXCHANGE);
             b.setSide(Side.BUY);
-            b.setPrice(e.getAsJsonArray().get(0).getAsString());
-            b.setQuantity(e.getAsJsonArray().get(1).getAsString());
+            b.setPrice(e.getAsJsonArray().get(0).getAsBigDecimal());
+            b.setQuantity(e.getAsJsonArray().get(1).getAsBigDecimal());
             out.add(b);
         }
         for(JsonElement e: o.get("asks").getAsJsonArray()){
             BookUpdate b=new BookUpdate(product,EXCHANGE);
             b.setSide(Side.SELL);
-            b.setPrice(e.getAsJsonArray().get(0).getAsString());
-            b.setQuantity(e.getAsJsonArray().get(1).getAsString());
+            b.setPrice(e.getAsJsonArray().get(0).getAsBigDecimal());
+            b.setQuantity(e.getAsJsonArray().get(1).getAsBigDecimal());
             out.add(b);
         }
         return out;
@@ -85,8 +85,8 @@ public class CoinbaseWebsocket extends WebSocketClient {
             BookUpdate b=new BookUpdate(product,EXCHANGE);
             String sideString=e.getAsJsonArray().get(0).getAsString();
             b.setSide(sideString.equals("buy")?Side.BUY:Side.SELL);
-            b.setPrice(e.getAsJsonArray().get(1).getAsString());
-            b.setQuantity(e.getAsJsonArray().get(2).getAsString());
+            b.setPrice(e.getAsJsonArray().get(1).getAsBigDecimal());
+            b.setQuantity(e.getAsJsonArray().get(2).getAsBigDecimal());
             out.add(b);
         }
         return out;

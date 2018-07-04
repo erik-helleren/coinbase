@@ -1,15 +1,18 @@
 package com.erik.bookManagement;
 
+import java.math.BigDecimal;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 public class BookState {
 
     private transient final boolean incremental;
-    private final Map<Side,Map<String,String>> book;
-    public transient static final Function<Side, Map<String, String>> SIDE_MAP_FUNCTION = (side) -> new HashMap<>();
+    private final Map<Side,Map<BigDecimal,BigDecimal>> book;
+    //For a small performance penalty, the tree map gives us nice, ordered JSON.
+    public transient static final Function<Side, Map<BigDecimal, BigDecimal>> SIDE_MAP_FUNCTION = (side) -> new TreeMap<>();
 
 
     public BookState() {
@@ -21,7 +24,7 @@ public class BookState {
      */
     public BookState(boolean incremental){
         this.incremental=incremental;
-        book=new EnumMap<Side, Map<String, String>>(Side.class);
+        book=new EnumMap<>(Side.class);
     }
 
     public void processBookUpdate(BookUpdate u){

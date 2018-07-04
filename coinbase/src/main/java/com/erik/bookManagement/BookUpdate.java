@@ -1,12 +1,14 @@
 package com.erik.bookManagement;
 
+import java.math.BigDecimal;
+
 public class BookUpdate {
 
     private final String product;
     private final String exchange;
     private Side side;
-    private String price;
-    private String quantity;
+    private BigDecimal price;
+    private BigDecimal quantity;
 
     public BookUpdate(String product, String exchange) {
         this.product = product;
@@ -17,11 +19,11 @@ public class BookUpdate {
         this.side = side;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
 
@@ -37,11 +39,11 @@ public class BookUpdate {
         return side;
     }
 
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public String getQuantity() {
+    public BigDecimal getQuantity() {
         return quantity;
     }
 

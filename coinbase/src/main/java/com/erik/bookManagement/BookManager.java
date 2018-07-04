@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
@@ -17,6 +18,8 @@ public class BookManager implements Runnable{
     private final String exchange;
     private final Gson gson=new Gson();
     private boolean mustSendSnapshotNext=true;
+
+    private long sequenceNumber=0;
 
     /**
      * The full book state is used for emiting
@@ -102,14 +105,17 @@ public class BookManager implements Runnable{
 
         JsonObject output=new JsonObject();
         output.addProperty("type",type);
-        output.add("data",data);
+        output.addProperty("product",this.product);
+        output.addProperty("exchange",this.exchange);
+        output.addProperty("sequenceNumber",this.sequenceNumber++);
         output.addProperty("time",System.currentTimeMillis());
+        BigDecimal bd=BigDecimal.ONE;
+        output.add("data",data);
+
 
         String jsonString = output.toString();
-        //Lets clear the incremental update after we have made it ready to send.
-        if(!takingSnapshot){
-            incrementalSate.clear();
-        }
+        //Lets clear the incremental update after we have already serialized it and its ready to send.
+        incrementalSate.clear();
         return jsonString;
     }
 

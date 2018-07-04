@@ -1,6 +1,7 @@
 package com.erik.coinbase;
 
 import com.erik.bookManagement.BookManager;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
@@ -28,8 +29,10 @@ public class BasicTest {
         Thread.sleep(1000);
 
 
-
-        String firstEmitted=emitedStrings.poll();
+        Assert.assertTrue(emitedStrings.poll().contains("snapshot"));
+        Assert.assertTrue(emitedStrings.poll().contains("incremental"));
+        Assert.assertTrue(emitedStrings.poll().contains("incremental"));
+        Assert.assertTrue(emitedStrings.poll().contains("snapshot"));
 
         int a=1+1;
     }
