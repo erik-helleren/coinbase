@@ -47,6 +47,7 @@ public class CoinbaseWebsocket extends WebSocketClient {
         }
         String type=e.get("type").getAsString();
         if(type.equals("snapshot")){
+            bookManager.clearBook();
             bookManager.receiveBookUpdate(getForSnapshot(e));
         }else if(type.equals("l2update")){
             bookManager.receiveBookUpdate(getForL2Update(e));

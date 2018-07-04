@@ -1,9 +1,6 @@
 package com.erik.bookManagement;
 
-import com.erik.bookManagement.Events.BookEvent;
-import com.erik.bookManagement.Events.BookUpdateEvent;
-import com.erik.bookManagement.Events.EmitL2UpdateEvent;
-import com.erik.bookManagement.Events.EmitSnapshotEvent;
+import com.erik.bookManagement.Events.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,6 +16,7 @@ public class BookManager implements Runnable{
     private final String product;
     private final String exchange;
     private final Gson gson=new Gson();
+    private boolean mustSendSnapshotNext=true;
 
     /**
      * The full book state is used for emiting
@@ -57,7 +55,17 @@ public class BookManager implements Runnable{
             e.printStackTrace();
         }
     }
+    public void clearBook(){
+        try {
+            incomingBookEvents.put(new ClearBookEvent());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
+    /**
+     * This may result in emiting a full snapshot if there was a clear in the underlying full book.
+     */
     public void emitL2Update(){
         try {
             incomingBookEvents.put(new EmitL2UpdateEvent());
@@ -79,12 +87,14 @@ public class BookManager implements Runnable{
     }
 
 
-    public String seralize(boolean snapshot){
+    public String seralize(boolean forceSnapshot){
         String type=null;
         JsonElement data=null;
-        if(snapshot){
+        boolean takingSnapshot = forceSnapshot || this.mustSendSnapshotNext;
+        if(takingSnapshot){
             type="snapshot";
             data=gson.toJsonTree(fullState);
+            mustSendSnapshotNext=false;
         }else{
             type="incremental";
             data=gson.toJsonTree(incrementalSate);
@@ -97,7 +107,7 @@ public class BookManager implements Runnable{
 
         String jsonString = output.toString();
         //Lets clear the incremental update after we have made it ready to send.
-        if(!snapshot){
+        if(!takingSnapshot){
             incrementalSate.clear();
         }
         return jsonString;
@@ -108,7 +118,6 @@ public class BookManager implements Runnable{
         return "BookManager{" +
                 "product='" + product + '\'' +
                 ", exchange='" + exchange + '\'' +
-                ", book=" + fullState +
                 '}';
     }
 
@@ -124,6 +133,9 @@ public class BookManager implements Runnable{
             }else if(e instanceof EmitSnapshotEvent){
                 String output=seralize(true);
                 bookUpdateDestination.accept(output);
+            }else if(e instanceof ClearBookEvent){
+                this.fullState.clear();
+                this.incrementalSate.clear();
             }
         }
     }
