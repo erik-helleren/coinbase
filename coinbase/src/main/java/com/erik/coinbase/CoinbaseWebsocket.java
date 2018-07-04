@@ -24,6 +24,8 @@ public class CoinbaseWebsocket extends WebSocketClient {
     private JsonParser parser=new JsonParser();
     public static final String EXCHANGE = "coinbase";
 
+    // NOTE the constructor and the establish connection methods are intentionally limited to just 1 product
+    // at this time.
     public CoinbaseWebsocket(BookManager bookManager) throws URISyntaxException {
         super(new URI("wss://ws-feed.pro.coinbase.com"));
         this.bookManager=bookManager;
@@ -93,13 +95,10 @@ public class CoinbaseWebsocket extends WebSocketClient {
     }
 
     public void onClose(int i, String s, boolean b) {
-
-        System.out.println("ON CLOSE: "+s);
+        logger.info("Connection closed for {} with this message: {}",this,s);
     }
 
     public void onError(Exception e) {
-        System.out.println("ON ERROR: "+e);
-        e.printStackTrace();
-
+        logger.error("Received websockets exception for {}",this,e);
     }
 }

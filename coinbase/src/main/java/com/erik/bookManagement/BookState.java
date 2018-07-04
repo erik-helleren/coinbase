@@ -23,8 +23,12 @@ public class BookState {
      * @param incremental if this is an incremental book state, all 0 quantity entries are preserved.
      */
     public BookState(boolean incremental){
-        this.incremental=incremental;
-        book=new EnumMap<>(Side.class);
+        this(incremental,new EnumMap<>(Side.class));
+    }
+
+    public BookState(boolean incremental, Map<Side, Map<BigDecimal, BigDecimal>> book) {
+        this.incremental = incremental;
+        this.book = book;
     }
 
     public void processBookUpdate(BookUpdate u){
@@ -41,5 +45,9 @@ public class BookState {
         for(Side s:book.keySet()){
             book.get(s).clear();
         }
+    }
+
+    public Map<Side, Map<BigDecimal, BigDecimal>> getBook() {
+        return book;
     }
 }

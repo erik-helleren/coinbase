@@ -96,11 +96,11 @@ public class BookManager implements Runnable{
         boolean takingSnapshot = forceSnapshot || this.mustSendSnapshotNext;
         if(takingSnapshot){
             type="snapshot";
-            data=gson.toJsonTree(fullState);
+            data=gson.toJsonTree(fullState.getBook());
             mustSendSnapshotNext=false;
         }else{
             type="incremental";
-            data=gson.toJsonTree(incrementalSate);
+            data=gson.toJsonTree(incrementalSate.getBook());
         }
 
         JsonObject output=new JsonObject();
