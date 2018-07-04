@@ -2,6 +2,7 @@ package com.erik.coinbase;
 
 import com.erik.bookManagement.BookManager;
 import com.erik.bookManagement.BookUpdate;
+import com.erik.bookManagement.Side;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

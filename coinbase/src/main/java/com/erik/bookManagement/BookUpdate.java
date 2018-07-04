@@ -1,7 +1,5 @@
 package com.erik.bookManagement;
 
-import com.erik.coinbase.Side;
-
 public class BookUpdate {
 
     private final String product;
