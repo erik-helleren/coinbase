@@ -29,14 +29,16 @@ public class BookState {
     public BookState(boolean incremental, Map<Side, Map<BigDecimal, BigDecimal>> book) {
         this.incremental = incremental;
         this.book = book;
+        book.computeIfAbsent(Side.BUY,SIDE_MAP_FUNCTION);
+        book.computeIfAbsent(Side.SELL,SIDE_MAP_FUNCTION);
     }
 
     public void processBookUpdate(BookUpdate u){
         if(u.getQuantity().equals("0")&&!incremental) {
-            book.computeIfAbsent(u.getSide(), SIDE_MAP_FUNCTION)
+            book.get(u.getSide())
                     .remove(u.getPrice());
         }else{
-            book.computeIfAbsent(u.getSide(), SIDE_MAP_FUNCTION)
+            book.get(u.getSide())
                     .put(u.getPrice(), u.getQuantity());
         }
     }
