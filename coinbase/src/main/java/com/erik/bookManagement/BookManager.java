@@ -53,14 +53,14 @@ public class BookManager implements Runnable{
 
     public void emitSnapshot(){
         try {
-            incomingBookEvents.put(new EmitSnapshotEvent());
+            incomingBookEvents.put(EmitSnapshotEvent.INSTANCE);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
     public void clearBook(){
         try {
-            incomingBookEvents.put(new ClearBookEvent());
+            incomingBookEvents.put(ClearBookEvent.INSTANCE);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -71,7 +71,7 @@ public class BookManager implements Runnable{
      */
     public void emitL2Update(){
         try {
-            incomingBookEvents.put(new EmitL2UpdateEvent());
+            incomingBookEvents.put(EmitL2UpdateEvent.INSTANCE);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
