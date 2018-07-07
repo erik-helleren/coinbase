@@ -77,11 +77,11 @@ public class BookManager implements Runnable{
         }
     }
 
-    public void processBookUpdate(Collection<BookUpdate> updates){
+    private void processBookUpdate(Collection<BookUpdate> updates){
         for(BookUpdate u:updates){
             if(!(u.getExchange().equals(this.exchange)&&
                 u.getProduct().equals(this.product))){
-                logger.warn("Book {} received a order from the wrong product or exchange.  Dropping: {}",this,u);
+                logger.warn("Book {} received an order from the wrong product or exchange.  Dropping: {}",this,u);
                 continue;
             }
             fullState.processBookUpdate(u);
@@ -90,7 +90,7 @@ public class BookManager implements Runnable{
     }
 
 
-    public String seralize(boolean forceSnapshot){
+    private String seralize(boolean forceSnapshot){
         String type=null;
         JsonElement data=null;
         boolean takingSnapshot = forceSnapshot || this.mustSendSnapshotNext;
