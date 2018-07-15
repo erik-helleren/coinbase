@@ -1,6 +1,6 @@
 package com.erik.coinbase;
 
-import com.erik.bookManagement.BookManager;
+import com.erik.bookManagement.Book;
 import com.erik.bookManagement.BookUpdate;
 import com.erik.bookManagement.Side;
 import com.google.gson.JsonElement;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class CoinbaseWebsocket extends WebSocketClient {
     private static final Logger logger=LogManager.getLogger(CoinbaseWebsocket.class);
-    private final BookManager bookManager;
+    private final Book book;
 
     private final String product;
     private JsonParser parser=new JsonParser();
@@ -27,9 +27,9 @@ public class CoinbaseWebsocket extends WebSocketClient {
 
     // NOTE the constructor and the establish connection methods are intentionally limited to just 1 product
     // at this time.
-    public CoinbaseWebsocket(BookManager bookManager,String product) throws URISyntaxException {
+    public CoinbaseWebsocket(Book book, String product) throws URISyntaxException {
         super(new URI("wss://ws-feed.pro.coinbase.com"));
-        this.bookManager=bookManager;
+        this.book = book;
         this.product=product;
     }
 
@@ -51,10 +51,10 @@ public class CoinbaseWebsocket extends WebSocketClient {
         }
         String type=e.get("type").getAsString();
         if(type.equals("snapshot")){
-            bookManager.clearBook();
-            bookManager.receiveBookUpdate(getForSnapshot(e));
+            book.clearBook();
+            book.receiveBookUpdate(getForSnapshot(e));
         }else if(type.equals("l2update")){
-            bookManager.receiveBookUpdate(getForL2Update(e));
+            book.receiveBookUpdate(getForL2Update(e));
         }else if(type.equals("heartbeat")) {
             logger.debug("Received a heartbeat message for {}",this);
         }else if(type.equals("subscriptions")) {

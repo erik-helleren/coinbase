@@ -49,6 +49,14 @@ public class BookState {
         }
     }
 
+    public int calculateBookSize(){
+        int out=0;
+        for(Side s:book.keySet()){
+            out+=book.get(s).size();
+        }
+        return out;
+    }
+
     public Map<Side, Map<BigDecimal, BigDecimal>> getBook() {
         return book;
     }

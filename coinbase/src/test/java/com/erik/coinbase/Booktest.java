@@ -1,6 +1,6 @@
 package com.erik.coinbase;
 
-import com.erik.bookManagement.BookManager;
+import com.erik.bookManagement.Book;
 import com.erik.bookManagement.BookUpdate;
 import com.erik.bookManagement.Side;
 import com.google.gson.JsonElement;
@@ -25,7 +25,7 @@ public class Booktest {
     public void emptyBookTest() throws InterruptedException {
         LinkedBlockingQueue<String> emitedStrings=new LinkedBlockingQueue<>();
         Consumer<String> consumer=(s)->emitedStrings.add(s);
-        BookManager bm=new BookManager(TEST_PRODUCT, TEST_EXCHANGE,consumer);
+        Book bm=new Book(TEST_PRODUCT, TEST_EXCHANGE,consumer);
         bm.emitSnapshot();
 
         String firstSnapshot=emitedStrings.take();
@@ -45,7 +45,7 @@ public class Booktest {
     public void sequenceNumberTest() throws InterruptedException {
         LinkedBlockingQueue<String> emitedStrings=new LinkedBlockingQueue<>();
         Consumer<String> consumer=(s)->emitedStrings.add(s);
-        BookManager bm=new BookManager(TEST_PRODUCT, TEST_EXCHANGE,consumer);
+        Book bm=new Book(TEST_PRODUCT, TEST_EXCHANGE,consumer);
         bm.emitSnapshot();
         bm.emitSnapshot();
 
@@ -60,7 +60,7 @@ public class Booktest {
     public void l2AfterSnapshotEmptyTest() throws InterruptedException {
         LinkedBlockingQueue<String> emitedStrings=new LinkedBlockingQueue<>();
         Consumer<String> consumer=(s)->emitedStrings.add(s);
-        BookManager bm=new BookManager(TEST_PRODUCT, TEST_EXCHANGE,consumer);
+        Book bm=new Book(TEST_PRODUCT, TEST_EXCHANGE,consumer);
         bm.emitSnapshot();
         BookUpdate bu=new BookUpdate(TEST_PRODUCT,TEST_EXCHANGE);
         bu.setPrice(new BigDecimal(123));

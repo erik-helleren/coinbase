@@ -1,11 +1,10 @@
 package com.erik.coinbase;
 
-import com.erik.bookManagement.BookManager;
+import com.erik.bookManagement.Book;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
@@ -16,7 +15,7 @@ public class BasicTest {
         LinkedBlockingQueue<String> emitedStrings=new LinkedBlockingQueue<>();
         Consumer<String> consumer=(s)->emitedStrings.add(s);
         consumer=consumer.andThen((s)->System.out.println(s));
-        BookManager bm=new BookManager("ETH-USD","coinbase",consumer);
+        Book bm=new Book("ETH-USD","coinbase",consumer);
         CoinbaseWebsocket cw=new CoinbaseWebsocket(bm,"ETH-USD");
         cw.establishConnection();
         Thread.sleep(1000);
