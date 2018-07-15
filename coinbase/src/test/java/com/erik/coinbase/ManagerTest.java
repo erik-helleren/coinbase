@@ -16,10 +16,11 @@ public class ManagerTest {
         Consumer<String> consumer=(s)->emitedStrings.add(s);
         consumer=consumer.andThen((s)->System.out.println(s));
         Configuration c= new Configuration();
+        c.incrementalFrequencyMs=250;
         c.coinbase=new Configuration.Coinbase();
         c.coinbase.products= Arrays.asList("ETH-USD","BTC-USD");
 
         Manager m=new Manager(c,consumer);
-        Thread.sleep(1000);
+        Thread.sleep(2500);
     }
 }

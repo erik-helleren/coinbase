@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class Booktest {
@@ -56,7 +57,7 @@ public class Booktest {
         Assert.assertEquals(1,secondSnapshot.get("sequenceNumber").getAsInt());
     }
     
-    @Test
+    @Test(timeout = 1000)
     public void l2AfterSnapshotEmptyTest() throws InterruptedException {
         LinkedBlockingQueue<String> emitedStrings=new LinkedBlockingQueue<>();
         Consumer<String> consumer=(s)->emitedStrings.add(s);
@@ -66,13 +67,12 @@ public class Booktest {
         bu.setPrice(new BigDecimal(123));
         bu.setQuantity(BigDecimal.TEN);
         bu.setSide(Side.BUY);
-        bm.receiveBookUpdate(Collections.singletonList(bu));
+        bm.receiveSnapshot(Collections.singletonList(bu));
         bm.emitSnapshot();
         bm.emitL2Update();
 
         JsonObject firstSnapshot=parser.parse(emitedStrings.take()).getAsJsonObject();
         JsonObject secondSnapshot=parser.parse(emitedStrings.take()).getAsJsonObject();
-        JsonObject firstL2Update=parser.parse(emitedStrings.take()).getAsJsonObject();
         for(Map.Entry<String, JsonElement> element:firstSnapshot.get("data").getAsJsonObject().entrySet())
             Assert.assertTrue(element.getValue().getAsJsonObject().entrySet().size()==0);
 
@@ -81,8 +81,8 @@ public class Booktest {
         Assert.assertTrue(secondSnapshot.get("data").getAsJsonObject()
                 .getAsJsonObject("SELL").entrySet().size()==0);
 
-        for(Map.Entry<String, JsonElement> element:firstL2Update.get("data").getAsJsonObject().entrySet())
-            Assert.assertTrue(element.getValue().getAsJsonObject().entrySet().size()==0);
+        //Make sure that there wasn't an empty snapshot that was sent
+        Assert.assertNull(emitedStrings.poll(100,TimeUnit.MILLISECONDS));
 
     }
 

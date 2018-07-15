@@ -39,13 +39,20 @@ public class Book implements Runnable {
         t.start();
     }
 
-    public void receiveBookUpdate(Collection<BookUpdate> updateSet) {
+    public void receiveSnapshot(Collection<BookUpdate> updateSet) {
         try {
-            incomingBookEvents.put(new BookUpdateEvent(updateSet));
+            incomingBookEvents.put(new BookUpdateEvent(updateSet,true));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        logger.trace("Received a Book Update");
+    }
+
+    public void receiveL2Update(Collection<BookUpdate> updateSet){
+        try {
+            incomingBookEvents.put(new BookUpdateEvent(updateSet,false));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void emitSnapshot() {
@@ -75,8 +82,11 @@ public class Book implements Runnable {
         }
     }
 
-    private void processBookUpdate(Collection<BookUpdate> updates) {
-        for (BookUpdate u : updates) {
+    private void processBookUpdate(BookUpdateEvent updates) {
+        if(updates.isSnapshot()){
+            this.clearBook();
+        }
+        for (BookUpdate u : updates.getUpdates()) {
             if (!(u.getExchange().equals(this.exchange) &&
                     u.getProduct().equals(this.product))) {
                 logger.warn("Book {} received an order from the wrong product or exchange.  Dropping: {}", this, u);
@@ -136,7 +146,7 @@ public class Book implements Runnable {
             }
             if (e == null) continue;
             if (e instanceof BookUpdateEvent) {
-                processBookUpdate(((BookUpdateEvent) e).getUpdates());
+                processBookUpdate((BookUpdateEvent) e);
             } else if (e instanceof EmitL2UpdateEvent) {
                 // only send an incremental update if there is something to update
                 if (incrementalSate.calculateBookSize() > 0) {

@@ -10,7 +10,7 @@ public class Configuration {
     /**
      * How frequently should an incremental update be published per book
      */
-    public int incrementalFrequencyMs=10;
+    public int incrementalFrequencyMs=50;
     /**
      * How frequently should a snapshot be published per book
      */
