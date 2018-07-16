@@ -14,8 +14,7 @@ incremental
 
 The messages are sent via a message broker (Just a linked list for now) to enable downstream components to have a real time book state.  By embedding snapshots regularly in the outbound, we enable easy recovery for downstream components.  By batching incremental updates, we save stress on downstream components while sacrafacing some latency as book updates are pooled.
 
-While not implemented yet, its easy to use a Scheduled executor to send out incremental and snapshots on a regular
-interval.
+The Manager takes a configuration object and a Consumer<String> to send all configured streams to the provided consumer. 
 
 This design also enables very modular testing.  The book management component is fully isolated from the connectors to
 market data from various exchanges.  So each exchange connections can individually be tested separate from book management.  
